@@ -1,18 +1,27 @@
 "use client";
-
-import { useConvexAuth } from "convex/react";
-import { ArrowRight } from "lucide-react";
-import { SignInButton } from "@clerk/clerk-react";
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/spinner";
+import { useState, useEffect } from 'react';
 
 export const Heading = () => {
-  const { isAuthenticated, isLoading } = useConvexAuth();
+  const [storedInitialData, setStoredInitialDataId] = useState(localStorage.getItem('initialData'));
+
+  // Sử dụng useEffect để cập nhật storedInitialDataId khi dữ liệu thay đổi
+  useEffect(() => {
+    const updateStoredInitialDataId = () => {
+      setStoredInitialDataId(localStorage.getItem('initialData'));
+    };
+
+    // Lắng nghe sự thay đổi của dữ liệu
+    window.addEventListener('storage', updateStoredInitialDataId);
+
+    // Xóa lắng nghe khi component bị unmounted
+    return () => {
+      window.removeEventListener('storage', updateStoredInitialDataId);
+    };
+  }, []); // Chỉ gọi effect này một lần sau khi component được rendered
 
   return (
-    <div className="max-w-3xl space-y-4">
+    <div>
+      <h1>Stored Initial Data: {storedInitialData} </h1>
     </div>
-  )
+  );
 }

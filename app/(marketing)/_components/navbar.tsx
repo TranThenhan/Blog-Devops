@@ -35,16 +35,16 @@ export const Navbar = () => {
             </SignInButton>
             <SignInButton mode="modal">
               <Button size="sm">
-                Get Blog Free
+                Get Blog Devops free
               </Button>
             </SignInButton>
           </>
         )}
         {isAuthenticated && !isLoading && (
           <>
-            <Button variant="ghost" size="sm" asChild style={{ border: '1px solid #0000ff' }}>
+            <Button variant="ghost" size="sm" asChild>
               <Link href="/documents">
-                Enter Create Blog
+                Enter Blog Devops
               </Link>
             </Button>
             <UserButton

@@ -1,153 +1,65 @@
 "use client";
 
-import { BlockNoteSchema, defaultStyleSpecs } from "@blocknote/core";
-import "@blocknote/core/fonts/inter.css";
+import { HiOutlineGlobeAlt } from "react-icons/hi";
+
+import { useTheme } from "next-themes";
 import {
-  BasicTextStyleButton,
+  BlockNoteEditor,
+  PartialBlock
+} from "@blocknote/core";
+import {
   BlockNoteView,
-  BlockTypeSelect,
-  ColorStyleButton,
-  CreateLinkButton,
-  FormattingToolbar,
-  FormattingToolbarController,
-  ImageCaptionButton,
-  NestBlockButton,
-  ReplaceImageButton,
-  TextAlignButton,
-  ToolbarButton,
-  UnnestBlockButton,
-  useBlockNoteEditor,
-  useCreateBlockNote,
+  getDefaultReactSlashMenuItems,
+  useBlockNote
 } from "@blocknote/react";
-import "@blocknote/react/style.css";
-import { RiText } from "react-icons/ri";
- 
-import { Font } from "./Font";
- 
-// Our schema with style specs, which contain the configs and implementations for styles
-// that we want our editor to use.
-const schema = BlockNoteSchema.create({
-  styleSpecs: {
-    // Adds all default styles.
-    ...defaultStyleSpecs,
-    // Adds the Font style.
-    font: Font,
-  },
-});
- 
-// Formatting Toolbar button to set the font style.
-const SetFontStyleButton = () => {
-  const editor = useBlockNoteEditor<
-    typeof schema.blockSchema,
-    typeof schema.inlineContentSchema,
-    typeof schema.styleSchema
-  >();
- 
-  return (
-    <ToolbarButton
-      mainTooltip={"Set Font"}
-      icon={RiText}
-      onClick={() => {
-        const fontName = prompt("Enter a font name") || "Comic Sans MS";
- 
-        editor.addStyles({
-          font: fontName,
-        });
-      }}
-    />
-  );
+import "@blocknote/core/style.css";
+
+import { useEdgeStore } from "@/lib/edgestore";
+
+interface EditorProps {
+  onChange: (value: string) => void;
+  initialContent?: string;
+  editable?: boolean;
 };
- 
-export default function App() {
-  // Creates a new editor instance.
-  const editor = useCreateBlockNote({
-    schema,
-    initialContent: [
-      {
-        type: "paragraph",
-        content: "Welcome to this demo!",
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Comic Sans MS",
-            styles: {
-              font: "Comic Sans MS",
-            },
-          },
-          {
-            type: "text",
-            text: " <- This text has a different font",
-            styles: {},
-          },
-        ],
-      },
-      {
-        type: "paragraph",
-        content:
-          "Highlight some text to open the Formatting Toolbar and change the font elsewhere",
-      },
-      {
-        type: "paragraph",
-      },
-    ],
-  });
- 
+
+const Editor = ({
+  onChange,
+  initialContent,
+  editable
+}: EditorProps) => {
+  const { resolvedTheme } = useTheme();
+  const { edgestore } = useEdgeStore();
+
+  const handleUpload = async (file: File) => {
+    const response = await edgestore.publicFiles.upload({ 
+      file
+    });
+
+    
+    return response.url;
+  }
+
+  const editor: BlockNoteEditor = useBlockNote({
+    editable,
+    initialContent: 
+      initialContent 
+      ? JSON.parse(initialContent) as PartialBlock[] 
+      : undefined,
+    onEditorContentChange: (editor) => {
+      onChange(JSON.stringify(editor.topLevelBlocks, null, 2));
+    },
+    uploadFile: handleUpload
+  })
+
+  console.log(editor);
   return (
-    <BlockNoteView editor={editor} formattingToolbar={false}>
-      {/* Replaces the default Formatting Toolbar. */}
-      <FormattingToolbarController
-        formattingToolbar={() => (
-          <FormattingToolbar>
-            <BlockTypeSelect key={"blockTypeSelect"} />
- 
-            <ImageCaptionButton key={"imageCaptionButton"} />
-            <ReplaceImageButton key={"replaceImageButton"} />
- 
-            <BasicTextStyleButton
-              basicTextStyle={"bold"}
-              key={"boldStyleButton"}
-            />
-            <BasicTextStyleButton
-              basicTextStyle={"italic"}
-              key={"italicStyleButton"}
-            />
-            <BasicTextStyleButton
-              basicTextStyle={"underline"}
-              key={"underlineStyleButton"}
-            />
-            <BasicTextStyleButton
-              basicTextStyle={"strike"}
-              key={"strikeStyleButton"}
-            />
-            {/* Adds SetFontStyleButton */}
-            <SetFontStyleButton />
- 
-            <TextAlignButton
-              textAlignment={"left"}
-              key={"textAlignLeftButton"}
-            />
-            <TextAlignButton
-              textAlignment={"center"}
-              key={"textAlignCenterButton"}
-            />
-            <TextAlignButton
-              textAlignment={"right"}
-              key={"textAlignRightButton"}
-            />
- 
-            <ColorStyleButton key={"colorStyleButton"} />
- 
-            <NestBlockButton key={"nestBlockButton"} />
-            <UnnestBlockButton key={"unnestBlockButton"} />
- 
-            <CreateLinkButton key={"createLinkButton"} />
-          </FormattingToolbar>
-        )}
-      />
-    </BlockNoteView>
-  );
+      <div>
+        <BlockNoteView
+          editor={editor}
+          theme={resolvedTheme === "dark" ? "dark" : "light"}
+        />
+      </div>
+  )
 }
- 
+
+export default Editor;

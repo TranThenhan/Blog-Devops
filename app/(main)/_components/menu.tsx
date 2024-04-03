@@ -25,9 +25,23 @@ interface MenuProps {
 export const Menu = ({
   documentId
 }: MenuProps) => {
+
   const router = useRouter();
   const { user } = useUser();
 
+  // Lấy thông tin user
+  const userFullName = user?.fullName;
+  const userEmail = user?.emailAddresses[0]?.emailAddress;
+
+  // Xác định giá trị cho trường name
+  let name;
+  if (userFullName !== null && userFullName !== undefined) {
+      name = userFullName;
+  } else if (userEmail !== null && userEmail !== undefined) {
+      name = userEmail;
+  } else {
+      name = ""; // hoặc giá trị mặc định khác nếu cần
+  }
   const archive = useMutation(api.documents.archive);
 
   const onArchive = () => {
@@ -61,7 +75,7 @@ export const Menu = ({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <div className="text-xs text-muted-foreground p-2">
-          Last edited by: {user?.fullName}
+          Last edited by: {name}
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
