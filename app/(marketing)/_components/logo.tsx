@@ -25,8 +25,8 @@ export const Logo = () => {
         alt="Logo"
         className="hidden dark:block"
       />
-      <p className={cn("font-semibold", font.className) } style={{ whiteSpace: 'nowrap' , fontSize: '18px'}}>
-        Blog Devops
+       <p className={cn("font-semibold", font.className) } style={{ whiteSpace: 'nowrap' , fontSize: '18px'}}>
+          Blog Devops
       </p>
     </div>
   )

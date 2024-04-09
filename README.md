@@ -1,14 +1,4 @@
-# Fullstack Notion Clone: Next.js 13, React, Convex, Tailwind 
 
-- Light and Dark mode 🌓
-- Trash can & soft delete 🗑️
-- Authentication 🔐 
-- File upload
-- File deletion
-- File replacement
-- Full mobile responsiveness 📱
-- Publish your note to the web 🌐
-- Recover deleted files 🔄📄
 
 ### Prerequisites
 

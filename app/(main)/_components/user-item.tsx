@@ -18,7 +18,6 @@ import {
 
 export const UserItem = () => {
   const { user } = useUser();
-  
 
   return (
     <DropdownMenu>

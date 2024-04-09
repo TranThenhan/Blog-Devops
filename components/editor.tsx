@@ -1,32 +1,56 @@
-"use client";
-
-import { HiOutlineGlobeAlt } from "react-icons/hi";
-
+import { Block, BlockNoteSchema, defaultBlockSpecs, filterSuggestionItems, insertOrUpdateBlock } from "@blocknote/core";
+import "@blocknote/core/fonts/inter.css";
+import { BlockNoteView, SuggestionMenuController, getDefaultReactSlashMenuItems, useCreateBlockNote } from "@blocknote/react";
+import "@blocknote/react/style.css";
+import { useState } from "react";
+import "./styles.css";
 import { useTheme } from "next-themes";
-import {
-  BlockNoteEditor,
-  PartialBlock
-} from "@blocknote/core";
-import {
-  BlockNoteView,
-  getDefaultReactSlashMenuItems,
-  useBlockNote
-} from "@blocknote/react";
-import "@blocknote/core/style.css";
-
 import { useEdgeStore } from "@/lib/edgestore";
+import "@mantine/core/styles.css";
+import { RiAlertFill } from "react-icons/ri";
+import { Alert } from "./Alert";
 
 interface EditorProps {
   onChange: (value: string) => void;
   initialContent?: string;
   editable?: boolean;
-};
+}
 
-const Editor = ({
+const schema = BlockNoteSchema.create({
+  blockSpecs: {
+    // Adds all default blocks.
+    ...defaultBlockSpecs,
+    // Adds the Alert block.
+    alert: Alert,
+  },
+});
+
+// Slash menu item to insert an Alert block
+const insertAlert = (editor: typeof schema.BlockNoteEditor) => ({
+  title: "Alert",
+  onItemClick: () => {
+    insertOrUpdateBlock(editor, {
+      type: "alert",
+    });
+  },
+  aliases: [
+    "alert",
+    "notification",
+    "emphasize",
+    "warning",
+    "error",
+    "info",
+    "success",
+  ],
+  group: "Other",
+  icon: <RiAlertFill />,
+});
+
+export default function Editor({
   onChange,
   initialContent,
-  editable
-}: EditorProps) => {
+}: EditorProps) {
+  const [blocks, setBlocks] = useState<Block[]>([]);
   const { resolvedTheme } = useTheme();
   const { edgestore } = useEdgeStore();
 
@@ -35,31 +59,38 @@ const Editor = ({
       file
     });
 
-    
     return response.url;
   }
-
-  const editor: BlockNoteEditor = useBlockNote({
-    editable,
+ 
+  const editor = useCreateBlockNote({
+    schema,
     initialContent: 
       initialContent 
-      ? JSON.parse(initialContent) as PartialBlock[] 
+      ? JSON.parse(initialContent) as Block[] 
       : undefined,
-    onEditorContentChange: (editor) => {
-      onChange(JSON.stringify(editor.topLevelBlocks, null, 2));
-    },
     uploadFile: handleUpload
-  })
-
-  console.log(editor);
+  });
+ 
+  // Renders the editor instance.
   return (
-      <div>
-        <BlockNoteView
-          editor={editor}
-          theme={resolvedTheme === "dark" ? "dark" : "light"}
-        />
-      </div>
-  )
+    <BlockNoteView editor={editor} slashMenu={false}
+    theme={resolvedTheme === "dark" ? "dark" : "light"}
+    onChange={() => {
+      // Call the onChange prop with the updated blocks JSON
+      onChange(JSON.stringify(editor.document, null, 2));
+  
+    }}>
+      {/* Replaces the default Slash Menu. */}
+      <SuggestionMenuController
+        triggerCharacter={"/"}
+        getItems={async (query) =>
+          // Gets all default slash menu items and `insertAlert` item.
+          filterSuggestionItems(
+            [...getDefaultReactSlashMenuItems(editor), insertAlert(editor)],
+            query
+          )
+        }
+      />
+    </BlockNoteView>
+  );
 }
-
-export default Editor;
