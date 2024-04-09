@@ -52,7 +52,12 @@ export const archive = mutation({
     return document;
   }
 })
-
+export const get = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("documents").take(1000000000);
+  },
+});
 export const getSidebar = query({
   args: {
     parentDocument: v.optional(v.id("documents"))

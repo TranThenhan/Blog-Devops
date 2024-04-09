@@ -1,27 +1,18 @@
 "use client";
-import { useState, useEffect } from 'react';
 
-export const Heading = () => {
-  const [storedInitialData, setStoredInitialDataId] = useState(localStorage.getItem('initialData'));
 
-  // Sử dụng useEffect để cập nhật storedInitialDataId khi dữ liệu thay đổi
-  useEffect(() => {
-    const updateStoredInitialDataId = () => {
-      setStoredInitialDataId(localStorage.getItem('initialData'));
-    };
+import React from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
-    // Lắng nghe sự thay đổi của dữ liệu
-    window.addEventListener('storage', updateStoredInitialDataId);
-
-    // Xóa lắng nghe khi component bị unmounted
-    return () => {
-      window.removeEventListener('storage', updateStoredInitialDataId);
-    };
-  }, []); // Chỉ gọi effect này một lần sau khi component được rendered
+const Heading = () => {
+  const tasks = useQuery(api.documents.get);
 
   return (
-    <div>
-      <h1>Stored Initial Data: {storedInitialData} </h1>
+    <div className="flex min-h-screen flex-col items-center justify-between p-24">
+      {JSON.stringify(tasks, null, 2)}
+
     </div>
   );
 }
+export default Heading;
