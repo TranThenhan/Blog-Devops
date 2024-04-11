@@ -7,8 +7,11 @@ import "./styles.css";
 import { useTheme } from "next-themes";
 import { useEdgeStore } from "@/lib/edgestore";
 import "@mantine/core/styles.css";
-import { RiAlertFill } from "react-icons/ri";
+import { RiCodeFill   } from "react-icons/ri";
 import { Alert } from "./Alert";
+import { RiAlertFill   } from "react-icons/ri";
+
+import { CodeBlock } from "./BlockCode";
 
 interface EditorProps {
   onChange: (value: string) => void;
@@ -20,10 +23,32 @@ const schema = BlockNoteSchema.create({
   blockSpecs: {
     // Adds all default blocks.
     ...defaultBlockSpecs,
-    // Adds the Alert block.
-    alert: Alert,
+    // Adds the Code block.
+    codeBlock: CodeBlock,
+    alert: Alert
   },
 });
+
+
+// Slash menu item to insert an Code block
+const insertCodeBlock = (editor: typeof schema.BlockNoteEditor) => ({
+  title: "Code Block",
+  onItemClick: () => {
+    insertOrUpdateBlock(editor, {
+      type: "codeBlock",
+    });
+  },
+  aliases: [
+    "java",
+    "python",
+    "javascripts",
+    "bash",
+  ],
+  group: "Other",
+  icon: <RiCodeFill  />,
+  styles: { code: true }
+});
+
 
 // Slash menu item to insert an Alert block
 const insertAlert = (editor: typeof schema.BlockNoteEditor) => ({
@@ -49,6 +74,7 @@ const insertAlert = (editor: typeof schema.BlockNoteEditor) => ({
 export default function Editor({
   onChange,
   initialContent,
+  editable,
 }: EditorProps) {
   const [blocks, setBlocks] = useState<Block[]>([]);
   const { resolvedTheme } = useTheme();
@@ -68,13 +94,15 @@ export default function Editor({
       initialContent 
       ? JSON.parse(initialContent) as Block[] 
       : undefined,
-    uploadFile: handleUpload
+    uploadFile: handleUpload,
+
   });
- 
+
   // Renders the editor instance.
   return (
-    <BlockNoteView editor={editor} slashMenu={false}
+    <BlockNoteView editor={editor} slashMenu={false} 
     theme={resolvedTheme === "dark" ? "dark" : "light"}
+    editable = {editable}
     onChange={() => {
       // Call the onChange prop with the updated blocks JSON
       onChange(JSON.stringify(editor.document, null, 2));
@@ -84,9 +112,9 @@ export default function Editor({
       <SuggestionMenuController
         triggerCharacter={"/"}
         getItems={async (query) =>
-          // Gets all default slash menu items and `insertAlert` item.
+          // Gets all default slash menu items and `insertAlert` item `insertCodeBlock` item.
           filterSuggestionItems(
-            [...getDefaultReactSlashMenuItems(editor), insertAlert(editor)],
+            [...getDefaultReactSlashMenuItems(editor), insertCodeBlock(editor), insertAlert(editor)],
             query
           )
         }

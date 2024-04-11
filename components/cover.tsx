@@ -40,10 +40,10 @@ export const Cover = ({
 
   return (
     <div className={cn(
-      "relative w-full h-[35vh] group",
+      "relative h-[35vh]  coverimg",
       !url && "h-[12vh]",
       url && "bg-muted"
-    )}>
+    )}style={{ backgroundColor: 'transparent' }}>
       {!!url && (
         <Image
           src={url}
