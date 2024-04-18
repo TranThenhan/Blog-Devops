@@ -64,6 +64,7 @@ export const getSidebar = query({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
+ 
 
     if (!identity) {
       throw new Error("Not authenticated");
@@ -108,6 +109,8 @@ export const create = mutation({
       userId,
       isArchived: false,
       isPublished: false,
+      userEdit: "",
+      userImg:""
     });
 
     return document;
@@ -282,16 +285,18 @@ export const update = mutation({
     content: v.optional(v.string()),
     coverImage: v.optional(v.string()),
     icon: v.optional(v.string()),
-    isPublished: v.optional(v.boolean())
+    isPublished: v.optional(v.boolean()),
+    userEdit: v.optional(v.string()),
+    userImg: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
+    // Remove authentication check
+    // const identity = await ctx.auth.getUserIdentity();
+    // if (!identity) {
+    //   throw new Error("Unauthenticated");
+    // }
 
-    if (!identity) {
-      throw new Error("Unauthenticated");
-    }
-
-    const userId = identity.subject;
+    // const userId = identity.subject;
 
     const { id, ...rest } = args;
 
@@ -301,9 +306,10 @@ export const update = mutation({
       throw new Error("Not found");
     }
 
-    if (existingDocument.userId !== userId) {
-      throw new Error("Unauthorized");
-    }
+    // Remove authorization check
+    // if (existingDocument.userId !== userId) {
+    //   throw new Error("Unauthorized");
+    // }
 
     const document = await ctx.db.patch(args.id, {
       ...rest,

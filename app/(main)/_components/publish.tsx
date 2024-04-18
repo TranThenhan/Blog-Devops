@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useMutation } from "convex/react";
 import { toast } from "sonner";
 import { Check, Copy, Globe } from "lucide-react";
+import { useUser } from "@clerk/clerk-react";
 
 import { Doc } from "@/convex/_generated/dataModel";
 import {
@@ -22,6 +23,23 @@ interface PublishProps {
 export const Publish = ({
   initialData
 }: PublishProps) => {
+  const { user } = useUser();
+  console.log("User:", user);
+
+   // Lấy thông tin user
+   const userFullName = user?.fullName;
+   const userName = user?.username;
+ 
+   // Xác định giá trị cho trường name
+   let name: string;
+   if (userFullName !== null && userFullName !== undefined) {
+       name = userFullName;
+   } else if (userName !== null && userName !== undefined) {
+       name = userName;
+   } else {
+       name = ""; // hoặc giá trị mặc định khác nếu cần
+   }
+
   const origin = useOrigin();
   const update = useMutation(api.documents.update);
 
@@ -36,6 +54,8 @@ export const Publish = ({
     const promise = update({
       id: initialData._id,
       isPublished: true,
+      userEdit: name,
+      userImg: user?.imageUrl,
     })
       .finally(() => setIsSubmitting(false));
 

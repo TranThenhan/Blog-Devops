@@ -31,14 +31,14 @@ export const Menu = ({
 
   // Lấy thông tin user
   const userFullName = user?.fullName;
-  const userEmail = user?.emailAddresses[0]?.emailAddress;
+  const userName = user?.username;
 
   // Xác định giá trị cho trường name
   let name;
   if (userFullName !== null && userFullName !== undefined) {
       name = userFullName;
-  } else if (userEmail !== null && userEmail !== undefined) {
-      name = userEmail;
+  } else if (userName !== null && userName !== undefined) {
+      name = userName;
   } else {
       name = ""; // hoặc giá trị mặc định khác nếu cần
   }
