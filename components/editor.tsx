@@ -11,7 +11,7 @@ import { RiCodeFill   } from "react-icons/ri";
 import { Alert } from "./Alert";
 import { RiAlertFill   } from "react-icons/ri";
 
-import { CodeBlock } from "./BlockCode";
+import CodeBlock from "./BlockCode";
 
 interface EditorProps {
   onChange: (value: string) => void;
