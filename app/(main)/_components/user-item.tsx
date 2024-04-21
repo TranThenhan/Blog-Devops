@@ -27,7 +27,7 @@ export const UserItem = () => {
             <Avatar className="h-5 w-5">
               <AvatarImage src={user?.imageUrl} />
             </Avatar>
-            <span className="text-start font-medium line-clamp-1">
+            <span className="text-start font-medium line-clamp-1" style={{ color: '#777' }}>
               {user?.fullName}&apos;s Blog
             </span>
           </div>

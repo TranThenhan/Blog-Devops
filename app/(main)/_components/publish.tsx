@@ -89,12 +89,13 @@ export const Publish = ({
     setTimeout(() => {
       setCopied(false);
     }, 1000);
+    toast.success("Link copied to clipboard!")
   }
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="sm" variant="ghost">
+        <Button size="sm" variant="ghost" style={{ color: '#777' }}>
           Publish 
           {initialData.isPublished && (
             <Globe

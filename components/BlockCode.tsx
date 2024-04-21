@@ -43,6 +43,8 @@ function CodeBlockRender(props: CodeBlockProps) {
   const [outputHidden, setOutputHidden] = useState(showTextarea);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
+  const [copyText, setCopyText] = useState("Copy");
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -69,12 +71,13 @@ function CodeBlockRender(props: CodeBlockProps) {
       setOutputHidden(true);
     }
   };
-  const handleCopy = () => {
+  const handleCopy = (e: { stopPropagation: () => void; }) => {
+    e.stopPropagation(); // Prevent the click event from propagating
     navigator.clipboard.writeText(props.block.props.content)
       .then(() => {
+        setCopyText("Copied!");
+        setTimeout(() => setCopyText("Copy"), 2000); // Reset the text after 5 seconds
         toast.success("Code copied to clipboard!");
-        setShowTextarea(false); 
-        setOutputHidden(false); 
       })
       .catch((error) => {
         toast.error("Failed to copy code to clipboard.");
@@ -109,7 +112,7 @@ function CodeBlockRender(props: CodeBlockProps) {
           <SyntaxHighlighter style={github} language="bash" showLineNumbers={true} className="custom-syntax-highlighter">
             {props.block.props.content}
           </SyntaxHighlighter>
-          <button className="copy-button" onClick={handleCopy}>Copy</button>
+          <button className="copy-button" onClick={handleCopy}>{copyText}</button>
         </div>
         
       )}
