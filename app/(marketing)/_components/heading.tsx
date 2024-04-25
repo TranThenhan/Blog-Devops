@@ -41,6 +41,7 @@ const Heading = () => {
             .includes(searchTerm.toLowerCase())))
   );
 
+
   return (
     <div className="main-markerting">
           <div className="heading-container">
@@ -68,11 +69,21 @@ const Heading = () => {
                   <Link href={`/preview/${task._id}`}>
                     <div className="info">
                       <h1>{task.title}</h1>
-                      {task.content && (
-                        <div>
-                          <p>{JSON.parse(task.content)[0]?.content[0]?.text}</p>
-                        </div>
-                      )}
+                      <p>
+                        {task.content && (
+                          (() => {
+                            const parsedContent = JSON.parse(task.content);
+                            let result = "";
+                            for (let i = 0; i < parsedContent.length; i++) {
+                              if (parsedContent[i]?.content && parsedContent[i]?.content[0]?.text) {
+                                result = parsedContent[i]?.content[0]?.text;
+                                break; 
+                              }
+                            }
+                            return result;
+                          })()
+                        )}
+                      </p>
                     </div>
                   </Link>
 
