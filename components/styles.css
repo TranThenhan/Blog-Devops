@@ -179,3 +179,23 @@ overflow: auto;
     }
 }
   
+.coverimg .action-buttons button {
+    background-color: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    color: #4b5563;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  }
+  
+  .coverimg .action-buttons button:hover {
+    background-color: #e5e7eb;
+    border-color: #cbd5e0;
+    color: #1f2937;
+  }
+  
+  .coverimg:hover .action-buttons {
+    opacity: 1;
+  }
