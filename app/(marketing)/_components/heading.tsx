@@ -36,9 +36,19 @@ const Heading = () => {
       task.userId === "user_2eQeBWY4pBwNoclOdC2KVtorboL" &&
       (task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (task.content &&
-          JSON.parse(task.content)[0]?.content[0]?.text
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())))
+          (() => {
+            const parsedContent = JSON.parse(task.content);
+            let result = "";
+            for (let i = 0; i < parsedContent.length; i++) {
+              if (parsedContent[i]?.content && parsedContent[i]?.content[0]?.text) {
+                result = parsedContent[i]?.content[0]?.text;
+                break;
+              }
+            }
+            return result.toLowerCase().includes(searchTerm.toLowerCase());
+          })()
+        )
+      )
   );
 
 
